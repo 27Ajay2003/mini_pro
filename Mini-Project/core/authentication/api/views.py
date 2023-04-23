@@ -8,6 +8,7 @@ from django.shortcuts import get_object_or_404
 
 from authentication.models import User
 from authentication.api.serializers import UserSerializer
+from rest_framework_simplejwt.views import TokenRefreshView
 
 
 class ProfileViewSet(ModelViewSet):
@@ -65,6 +66,9 @@ class UserView(APIView):
         user = get_object_or_404(User, username=request.user.username)
         user.delete()
         return Response(status=204)
+    
+class RefreshTokenView(TokenRefreshView):
+    pass    
 
         
         
