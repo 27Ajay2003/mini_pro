@@ -5,10 +5,8 @@ from technicalquestions_api.models import Results
 from technicalquestions_api.api.serializers import ResultsSerializer
 
   
-
 class UserSerializer(serializers.ModelSerializer):
     results = ResultsSerializer(many=True, read_only=True)
-    #print(results.data)
     class Meta:
         model = User
         fields = ['username','rollno' ,'email', 'password','results']
