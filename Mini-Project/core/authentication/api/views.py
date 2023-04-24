@@ -5,10 +5,10 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.shortcuts import get_object_or_404
+from rest_framework_simplejwt.views import TokenRefreshView
 
 from authentication.models import User
 from authentication.api.serializers import UserSerializer
-from rest_framework_simplejwt.views import TokenRefreshView
 
 
 class ProfileViewSet(ModelViewSet):
@@ -17,12 +17,14 @@ class ProfileViewSet(ModelViewSet):
     serializer_class = UserSerializer
     lookup_field = 'username'
 
+
 class RegisterView(APIView):
     def post(self, request):
         serializer = UserSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
+
 
 class LoginView(APIView):
     def post(self, request):
@@ -45,6 +47,7 @@ class LoginView(APIView):
         }
         return Response(data)
 
+
 class UserView(APIView):
     permission_classes = [IsAuthenticated]
     
@@ -66,11 +69,7 @@ class UserView(APIView):
         user = get_object_or_404(User, username=request.user.username)
         user.delete()
         return Response(status=204)
-    
-class RefreshTokenView(TokenRefreshView):
-    pass    
 
-        
-        
-    
-    
+
+class RefreshTokenView(TokenRefreshView):
+    pass
