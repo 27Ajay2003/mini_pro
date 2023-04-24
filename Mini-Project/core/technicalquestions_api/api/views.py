@@ -12,7 +12,7 @@ from random import sample
 from collections import defaultdict
 
 from ..models import ResultTest
-from .serializers import ResultTestSerializer, ResultTestCreateSerializer
+from .serializers import ResultTestSerializer
 
 # class ResultsViewSet(ModelViewSet):
 #     permission_classes = [IsAuthenticated,IsAdminUser]
@@ -66,9 +66,9 @@ class ResultTestListCreateView(generics.ListCreateAPIView):
         return ResultTest.objects.all()
 
     def post(self, request, *args, **kwargs):
-        serializer = ResultTestCreateSerializer(data=request.data)
+        serializer = ResultTestSerializer(data=request.data)
         if serializer.is_valid():
-            test = serializer.save(user=request.user)
+            test = serializer.save()
             serializer = ResultTestSerializer(test)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
