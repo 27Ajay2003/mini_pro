@@ -1,13 +1,13 @@
 # VERIFY-PATH
-# import os
-# path = os.getcwd()
-# print(path)
+import os
+path = os.getcwd()
+print(path)
 
 # IMPORT TECHNICAL_DATASET CSV
 import csv
 from technicalquestions_api.models import QuizQuestion
 
-with open('./data/final_technical_q_dataset_finalized.csv') as csvfile:
+with open('./media/csv/final_technical_q_dataset_finalized.csv') as csvfile:
     reader = csv.DictReader(csvfile)
 
     # Loop through the rows and create new QuizQuestion objects

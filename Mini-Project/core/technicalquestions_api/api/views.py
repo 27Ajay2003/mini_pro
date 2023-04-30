@@ -2,37 +2,23 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
-from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
+from django.shortcuts import get_object_or_404
+from django.http import JsonResponse
 
-from technicalquestions_api.models import QuizQuestion
-from technicalquestions_api.api.serializers import QuizQuestionSerializer
 
+from technicalquestions_api.models import QuizQuestion, ResultTest
+from technicalquestions_api.api.serializers import QuizQuestionSerializer, ResultTestSerializer
+
+import json
 from random import sample
 from collections import defaultdict
 
-from ..models import ResultTest
-from .serializers import ResultTestSerializer
-
-import json
-from django.db.models import Q
-from django.http import JsonResponse
 from sklearn.metrics.pairwise import cosine_similarity
-from django.views.generic.base import View
-
-
-
-from rest_framework import status
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework.decorators import api_view
 from sklearn.feature_extraction.text import TfidfVectorizer
 import numpy as np
 
 
-# class ResultsViewSet(ModelViewSet):
-#     permission_classes = [IsAuthenticated,IsAdminUser]
-#     serializer_class = ResultsSerializer
-#     queryset = Results.objects.all()
 
 class QuizQuestionViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated,IsAdminUser]
@@ -70,6 +56,7 @@ class GenerateTechnicalQuestionsView(APIView):
         # Return the questions data in a JSON response
         return Response(data)
     
+
 class SimilarQuestionsView(APIView):
     permission_classes = [IsAuthenticated,IsAdminUser]
 
@@ -165,6 +152,7 @@ class SimilarQuestionsView(APIView):
         }
         return Response(data, status=status.HTTP_200_OK)
     
+
 class ProvideQuestionsView(APIView):
     permission_classes = [IsAuthenticated,IsAdminUser]
 
@@ -197,14 +185,12 @@ class ProvideQuestionsView(APIView):
         return JsonResponse({'questions': data})    
         
         
-
 class ResultTestListCreateView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated,IsAdminUser]
     serializer_class = ResultTestSerializer
 
     def get_queryset(self):
         # print(self.request.user)
-        # return ResultTest.objects.filter(user=self.request.user)
         return ResultTest.objects.all()
 
     def post(self, request, *args, **kwargs):
