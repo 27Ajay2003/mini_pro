@@ -4,10 +4,11 @@
 
 ## Open Endpoints
 
-Open endpoints require no Authentication.
+Authenication APP desc:used for registering,login,viewing profile info of users and access token refresh
 
 * [Register](docs/auth/register.md) : `POST /api/auth/register/`
 * [Login](docs/auth/login.md) : `POST /api/auth/login/`
+* [Register](docs/auth/register.md) : `POST /api/auth/login/`
 
 
 <!-- ## Endpoints that require Authentication
