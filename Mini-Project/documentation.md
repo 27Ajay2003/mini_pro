@@ -18,7 +18,7 @@ desc:used for registering,login,viewing profile info of users and access token r
 
 * [Scrape_result](docs/jobs/scrape_result_pk.md) : `api/jobs/scrape-result/:pk`
 * [Scrape_results](docs/jobs/scrape_results.md) : `api/jobs/scrape-results/`
-* [Search](docs/auth/profiles.md) : `/api/auth/profiles/`
+* [Search](docs/jobs/search.md) : `/api/jobs/search/< >/?q=< >`
 
 
 
