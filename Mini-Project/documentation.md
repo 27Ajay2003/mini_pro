@@ -2,7 +2,7 @@
 
 `server`: http://localhost:8000/
 
-## Authenication APP Endpoints
+## Authentication APP Endpoints
 
 desc:used for registering,login,viewing profile info of users and access token refresh
 
