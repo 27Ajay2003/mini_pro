@@ -2,15 +2,15 @@
 
 `server`: http://localhost:8000/
 
-## Open Endpoints
+## Authenication APP Endpoints
 
-Authenication APP desc:used for registering,login,viewing profile info of users and access token refresh
+desc:used for registering,login,viewing profile info of users and access token refresh
 
-* [Register](docs/auth/register.md) : `POST /api/auth/register/`
-* [Login](docs/auth/login.md) : `POST /api/auth/login/`
-* [Register](docs/auth/register.md) : `POST /api/auth/register/`
-* [User](docs/auth/user.md) : `GET PUT DELETE /api/auth/user/`
-* [Refresh](docs/auth/refresh.md) : `POST /api/auth/refresh/`
+* [Register](docs/auth/register.md) : `/api/auth/register/`
+* [Login](docs/auth/login.md) : `/api/auth/login/`
+* [Register](docs/auth/profiles.md) : `/api/auth/profiles/`
+* [User](docs/auth/user.md) : `/api/auth/user/`
+* [Refresh](docs/auth/refresh.md) : `/api/auth/refresh/`
 
 
 <!-- ## Endpoints that require Authentication
