@@ -12,6 +12,15 @@ desc:used for registering,login,viewing profile info of users and access token r
 * [User](docs/auth/user.md) : `/api/auth/user/`
 * [Refresh](docs/auth/refresh.md) : `/api/auth/refresh/`
 
+## JobScrape APP Endpoints
+
+desc:used for registering,login,viewing profile info of users and access token refresh
+
+* [Scrape_result](docs/jobs/scrape_result_pk.md) : `api/jobs/scrape-result/:pk`
+* [Scrape_results](docs/jobs/scrape_results.md) : `api/jobs/scrape-results/`
+* [Search](docs/auth/profiles.md) : `/api/auth/profiles/`
+
+
 
 <!-- ## Endpoints that require Authentication
 
