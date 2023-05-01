@@ -8,7 +8,7 @@ Authenication APP desc:used for registering,login,viewing profile info of users 
 
 * [Register](docs/auth/register.md) : `POST /api/auth/register/`
 * [Login](docs/auth/login.md) : `POST /api/auth/login/`
-* [Register](docs/auth/register.md) : `POST /api/auth/login/`
+* [Register](docs/auth/register.md) : `POST /api/auth/register/`
 
 
 <!-- ## Endpoints that require Authentication
