@@ -25,8 +25,14 @@ desc:used for searching the database and retrievel of scraped job results
 desc:used for the test portal operations and storing,operations on user results
 
 * [Generate](docs/technical/generate.md) : `/api/technical/question/generate/`
-* [Scrape_results](docs/jobs/scrape_results.md) : `api/jobs/scrape-results/`
-* [Search](docs/jobs/search.md) : `/api/jobs/search/< >/?q=< >`
+* [Prev_Results](docs/technical/prev_results.md) : `/api/technical/prev-results/`
+* [Prev_Results_User](docs/technical/prev_results_user.md) : `/api/technical/prev-results/user/`
+* [Prev_Results_User_PK](docs/technical/prev_results_user_pk.md) : `/api/technical/prev-results/user/:pk`
+* [Provide](docs/technical/provide.md) : `/api/technical/question/provide/`
+* [Quiz Questions](docs/technical/quizquestions.md) : `/api/technical/questions/`
+* [Similar](docs/technical/similar.md) : `/api/technical/question/similar/`
+
+ 
 
 
 
