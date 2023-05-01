@@ -132,7 +132,7 @@ api/jobs/scrape-result/Data Scientist/
         ...
         ...
         ]
-    },
+   
     
 
 }
