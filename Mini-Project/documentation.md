@@ -8,7 +8,7 @@ desc:used for registering,login,viewing profile info of users and access token r
 
 * [Register](docs/auth/register.md) : `/api/auth/register/`
 * [Login](docs/auth/login.md) : `/api/auth/login/`
-* [Register](docs/auth/profiles.md) : `/api/auth/profiles/`
+* [Profiles](docs/auth/profiles.md) : `/api/auth/profiles/`
 * [User](docs/auth/user.md) : `/api/auth/user/`
 * [Refresh](docs/auth/refresh.md) : `/api/auth/refresh/`
 
