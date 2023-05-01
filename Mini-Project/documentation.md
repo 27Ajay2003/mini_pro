@@ -20,6 +20,14 @@ desc:used for searching the database and retrievel of scraped job results
 * [Scrape_results](docs/jobs/scrape_results.md) : `api/jobs/scrape-results/`
 * [Search](docs/jobs/search.md) : `/api/jobs/search/< >/?q=< >`
 
+## TechnicalQuestions APP Endpoints
+
+desc:used for the test portal operations and storing,operations on user results
+
+* [Generate](docs/technical/generate.md) : `/api/technical/question/generate/`
+* [Scrape_results](docs/jobs/scrape_results.md) : `api/jobs/scrape-results/`
+* [Search](docs/jobs/search.md) : `/api/jobs/search/< >/?q=< >`
+
 
 
 <!-- ## Endpoints that require Authentication
