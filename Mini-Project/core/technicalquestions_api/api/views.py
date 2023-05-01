@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework import generics, status
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
+from core.getkeywords import get_top_keywords
 
 
 from technicalquestions_api.models import QuizQuestion, ResultTest
@@ -17,6 +18,10 @@ from collections import defaultdict
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import TfidfVectorizer
 import numpy as np
+import random
+from django.http import Http404
+
+
 
 
 
@@ -58,99 +63,111 @@ class GenerateTechnicalQuestionsView(APIView):
     
 
 class SimilarQuestionsView(APIView):
-    permission_classes = [IsAuthenticated,IsAdminUser]
+    permission_classes = [IsAuthenticated, IsAdminUser]
 
     def post(self, request):
         # Get list of wrong question ids from request body
         body_unicode = request.body.decode('utf-8')
         body = json.loads(body_unicode)
         wrong_question_ids = body.get('ids', [])
+        invalid_ids = set(wrong_question_ids) - set(QuizQuestion.objects.values_list('question_id', flat=True))
+        if invalid_ids:
+            raise Http404(f'Invalid question ids: {", ".join(map(str, invalid_ids))}')
 
         # Get all questions except the ones the user attempted wrong
         ex_questions = QuizQuestion.objects.filter(question_id__in=wrong_question_ids)
-        print(ex_questions)
         questions = QuizQuestion.objects.exclude(question_id__in=wrong_question_ids)
-        #print(questions)
 
         # Create a matrix of the question features (topic, subject, difficulty, cognitive level)
         feature_matrix = []
-        ex_feature_matrix=[]
+        ex_feature_matrix = []
+        subjects = {}
         for question in questions:
-            #features = question.question+","+question.topic+","+question.option_a+","+question.option_b+","+question.option_c+","+question.option_d+","+ question.subject+","+question.difficulty+","+ question.cognitive_level
-            #features = question.topic+","+ question.subject
-            #features = question.topic
-            features = question.topic+","+question.option_a+","+question.option_b+","+question.option_c+","+question.option_d+","+question.difficulty+","+ question.cognitive_level
+            features = [get_top_keywords(question.question) ,get_top_keywords(question.option_a), get_top_keywords(question.option_b), get_top_keywords(question.option_c), get_top_keywords(question.option_d),
+                        question.difficulty, question.cognitive_level, question.subject,question.topic]
             feature_matrix.append(features)
-            
+            subject = question.subject
+            if subject not in subjects:
+                subjects[subject] = [question]
+            else:
+                subjects[subject].append(question)
+
         for question in ex_questions:
-            #features = question.question+","+question.topic+","+question.option_a+","+question.option_b+","+question.option_c+","+question.option_d+","+ question.subject+","+question.difficulty+","+ question.cognitive_level
-            #features = question.question+","+question.topic+","+ question.subject+","+question.difficulty+","+ question.cognitive_level
-            features = question.topic+","+question.option_a+","+question.option_b+","+question.option_c+","+question.option_d+","+question.difficulty+","+ question.cognitive_level
-            #features = question.topic+","+ question.subject
-            ex_feature_matrix.append(features)    
-            
-        #print(ex_feature_matrix)    
-            
+            features = [get_top_keywords(question.question) ,get_top_keywords(question.option_a), get_top_keywords(question.option_b), get_top_keywords(question.option_c), get_top_keywords(question.option_d),
+                        question.difficulty, question.cognitive_level, question.subject,question.topic]
+            ex_feature_matrix.append(features)
+
+        # Create a dictionary to store the most similar questions
+        similar_questions_dict = {}
+
+        # Calculate the TF-IDF matrix
+        tfidf_vectorizer = TfidfVectorizer()
+        feature_matrix_tfidf = tfidf_vectorizer.fit_transform([','.join(map(str, row)) for row in feature_matrix])
+        ex_feature_matrix_tfidf = tfidf_vectorizer.transform([','.join(map(str, row)) for row in ex_feature_matrix])
 
         # Calculate the cosine similarity matrix
-        tfidf_vectorizer = TfidfVectorizer()
-        tfidf_matrix = tfidf_vectorizer.fit_transform(feature_matrix + ex_feature_matrix)
+        similarities = cosine_similarity(ex_feature_matrix_tfidf, feature_matrix_tfidf)
 
-# calculate cosine similarity between tf-idf vectors
-        cosine_similarities = cosine_similarity(tfidf_matrix[-len(ex_feature_matrix):], tfidf_matrix[:-len(ex_feature_matrix)])
+        #Find the 10 most similar questions for each subject
+        # for i in range(similarities.shape[0]):
+        #     sorted_indices = similarities[i].argsort()[::-1][:40]
+        #     for index in sorted_indices:
+        #         question = questions[int(index)] 
+        #         subject = question.subject
+        #         if subject not in similar_questions_dict:
+        #             similar_questions_dict[subject] = [question]
+        #         elif len(similar_questions_dict[subject]) < 10:
+        #             similar_questions_dict[subject].append(question)
+                    
+                    
+        # for i in range(similarities.shape[0]):
+        #     sorted_indices = similarities[i].argsort()[::-1][:40]
+        #     for index in sorted_indices:
+        #         question = questions[int(index)] 
+        #         subject = question.subject
+        #         if subject not in similar_questions_dict:
+        #             similar_questions_dict[subject] = []
+        #         if question not in similar_questions_dict[subject]:
+        #             similar_questions_dict[subject].append(question)
+        #             if len(similar_questions_dict[subject]) >= 10:
+        #                 break            
 
-        # get the most similar elements using cosine similarity
-        similar_indices = cosine_similarities.argsort()[:, ::-1][0][:40]
-        similar_elements = [feature_matrix[i] for i in similar_indices]
+        # Return the similar questions as JSON
+        # similar_questions_data = {}
+        # for subject in subjects:
+        #     subject_questions = similar_questions_dict.get(subject, [])
+        #     if len(subject_questions) < 10:
+        #         remaining_questions = subjects[subject][:10 - len(subject_questions)]
+        #         subject_questions.extend(remaining_questions)
+        #     subject_data = QuizQuestionSerializer(subject_questions, many=True).data
+        #     similar_questions_data[subject] = subject_data
 
-        print(similar_elements)
-        indices = [i for i in range(len(feature_matrix)) if feature_matrix[i] in similar_elements]
+        # return JsonResponse(similar_questions_data)
+        for i in range(similarities.shape[0]):
+            sorted_indices = similarities[i].argsort()[::-1][:40]
+            for index in sorted_indices:
+                question = questions[int(index)] 
+                subject = question.subject
+                if subject not in similar_questions_dict:
+                    similar_questions_dict[subject] = set([question])
+                elif len(similar_questions_dict[subject]) < 10:
+                    similar_questions_dict[subject].add(question)
 
-        print(indices)
-        print("hey")
-        # vectorizer = TfidfVectorizer()
-        # transformed = vectorizer.fit_transform(feature_matrix)
-        # similarity_matrix = cosine_similarity(transformed)
-        # print(similarity_matrix)
-        # print(type(similarity_matrix))
-        # print(len(similarity_matrix))
-        # print(len(similarity_matrix[0]))
+        # Create a list of 10 unique questions for each subject
+        similar_questions_data = {}
+        for subject in subjects:
+            subject_questions = list(similar_questions_dict.get(subject, set()))
+            if len(subject_questions) < 10:
+                remaining_questions = list(set(subjects[subject]) - set(subject_questions))
+                subject_questions.extend(remaining_questions[:10 - len(subject_questions)])
+            subject_data = QuizQuestionSerializer(subject_questions, many=True).data
+            similar_questions_data[subject] = subject_data
 
-        # Get the indices of the top 40 most similar questions
-        #flat_indices = similarity_matrix.flatten().argsort()[::-1][:40]
-        #print(flat_indices)
-        #top_indices = [(index // similarity_matrix.shape[1], index % similarity_matrix.shape[1]) for index in flat_indices]
-        #print(top_indices)
+        return JsonResponse(similar_questions_data)
 
-        # Get the actual questions corresponding to the top indices
-        #top_questions = [list(questions)[i] for i in [index[1] for index in top_indices]]
-        #print(top_questions)
-        
-        # flat_indices = similarity_matrix.flatten().argsort()[::-1][:40]
-        # top_indices = [(index // similarity_matrix.shape[1], index % similarity_matrix.shape[1]) for index in flat_indices]
 
-        #     # Get the actual question ids corresponding to the top indices
-        top_questions = [questions[i].question_id for i in indices]
-        print(top_questions)
-        print("hello")
 
-        # Convert the questions to a JSON response
-        data = {
-            'questions': [{
-                'question_id': question.question_id,
-                'topic': question.topic,
-                'question': question.question,
-                'option_a': question.option_a,
-                'option_b': question.option_b,
-                'option_c': question.option_c,
-                'option_d': question.option_d,
-                'correct_answer': question.correct_answer,
-                'difficulty': question.difficulty,
-                'cognitive_level': question.cognitive_level,
-                'subject': question.subject
-            } for question in questions.filter(question_id__in=top_questions)]
-        }
-        return Response(data, status=status.HTTP_200_OK)
+
     
 
 class ProvideQuestionsView(APIView):
