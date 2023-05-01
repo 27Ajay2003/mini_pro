@@ -18,7 +18,7 @@ Retrieves the scrape result for a specific job.
 api/jobs/scrape-result/Data Scientist/
 
 {
-    "recommended_jobs": [
+    "Data Scientist": [
         {
             "title": "Data Scientist - 12241483314",
             "matching_skills": [
