@@ -133,8 +133,7 @@ api/jobs/scrape-result/Data Scientist/
         ...
         ]
     },
-    "date created": "2023-04-30T10:23:48.179304Z",
-    "job_name":"Software Engineer"
+    
 
 }
 ```
